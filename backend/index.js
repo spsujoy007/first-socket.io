@@ -5,6 +5,7 @@ const port = process.env.PORT || 3001
 const cors = require('cors');
 
 // middleware 
+// app.use(express())
 app.use(cors())
 
 const http = require('http');
@@ -20,10 +21,13 @@ const io = new Server(server, {
 })
 
 io.on("connection", (socket) => {
-    console.log(`user id: ${socket.id}`)
+
+    socket.on("join_room", (data) => {
+        socket.join(data)
+    })
 
     socket.on("send_message", (data) => {
-        socket.broadcast.emit("recive_message", data)
+        socket.to(data.room).emit("recive_message", data)
     })
 
 })

@@ -7,23 +7,50 @@ function App() {
 
   const [getMsg, setGetMsg] = useState()
   const [reciveMsg, setReciveMsg] = useState("")
+  const [room, setRoom] = useState('');
 
-  const handleSendMessage = (event) => {
-    socket.emit("send_message", {message: getMsg})
+  
+  const handleJoinRoom = () => {
+    if(room !== ""){
+      socket.emit("join_room", room)
+    }
   }
 
+  const handleSendMessage = (event) => {
+    const form = event.target
+    event.preventDefault()
+      socket.emit("send_message", {message: getMsg, room})
+      form.reset()
+  }
+  
   useEffect(() => {
       socket.on("recive_message", (data) => {
-        // alert(data.message)
         setReciveMsg(data.message)
       })
   }, [])
 
+
+  useEffect(() => {
+    fetch('/')
+  }, [])
+
   return (
     <div className="App">
-      <h1>{reciveMsg}</h1>
-      <input onChange={(e) => setGetMsg(e.target.value)} type="text" placeholder="type your message" />
-      <button onClick={handleSendMessage} className="">Send</button>
+      
+      <div>
+        <input onChange={(e) => setRoom(e.target.value)} type="text" placeholder="type room id" />
+        <button onClick={handleJoinRoom} className="">Join room</button>
+      </div>
+
+      <form onSubmit={handleSendMessage} style={{marginTop: "20px"}}>
+        <input onChange={(e) => setGetMsg(e.target.value)} type="text" placeholder="type your message" />
+        <button type='submit' className="">Send</button>
+      </form>
+
+      <div>
+        <h1>Message: <span>{reciveMsg}</span></h1>
+      </div>
+
     </div>
   );
 }
