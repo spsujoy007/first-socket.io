@@ -1,4 +1,3 @@
-
 const express = require('express')
 const app = express()
 const port = process.env.PORT || 3001
@@ -29,7 +28,6 @@ io.on("connection", (socket) => {
     socket.on("send_message", (data) => {
         socket.to(data.room).emit("recive_message", data)
     })
-
 })
 
 app.get('/', (req, res) => {
